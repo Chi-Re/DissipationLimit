@@ -1,0 +1,8 @@
+displayName: "DissipationLimit"
+name: "dissipation-limit"
+author: "炽热"
+main: "chire.heatdeath.DissipationLimit"
+description: "更多的游戏内容"
+version: 1.0.0
+minGameVersion: 146
+java: true
