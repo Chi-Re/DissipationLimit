@@ -20,8 +20,12 @@ ext{
     mindustryVersion = 'v145'
     jabelVersion = "93fde537c7"
     sdkRoot = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
-    gamePath = "C:\\Users\\${System.getenv("USERNAME")}\\Desktop\\Mindustry-146.jar"
+    gamePath = "C:\\Users\\${System.getenv("USERNAME")}\\Desktop\\Mindustry-CN-ARC-Desktop-30823.jar"
     modPath = "C:\\Users\\${System.getenv("USERNAME")}\\AppData\\Roaming\\Mindustry\\mods"
+
+    android_ip = "192.168.1.8:5555"
+    adbPath = "E:\\安装\\MuMuPlayer-12.0\\shell\\adb.exe"
+    gamePackage = "io.anuke.mindustry.arc2"
 }
 
 //java 8 backwards compatibility flag
@@ -108,7 +112,7 @@ task deploy(type: Jar){
     }
 }
 
-task testMod {
+task testDesktopMod {
     dependsOn jar
     doLast {
         delete{
@@ -120,5 +124,19 @@ task testMod {
         }
         def commandLine = "cmd /c start cmd.exe /c java -jar ${gamePath}"
         commandLine.execute()
+    }
+}
+
+task testAndroidMod {
+    dependsOn jarAndroid
+
+    doLast {
+        exec {
+            commandLine 'cmd', "/c",
+                    "${adbPath} connect ${android_ip} &&" +
+                    "${adbPath} shell rm /sdcard/Android/data/${gamePackage}/files/mods/${project.archivesBaseName}Android.jar &&" +
+                    "${adbPath} push $buildDir/libs/${project.archivesBaseName}Android.jar /sdcard/Android/data/${gamePackage}/files/mods &&" +
+                    "${adbPath} shell am start ${gamePackage}/mindustry.android.AndroidLauncher"
+        }
     }
 }
