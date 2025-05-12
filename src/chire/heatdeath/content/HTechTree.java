@@ -1,6 +1,7 @@
 package chire.heatdeath.content;
 
 import arc.struct.Seq;
+import mindustry.content.Blocks;
 import mindustry.content.TechTree;
 import mindustry.ctype.UnlockableContent;
 import mindustry.game.Objectives;
@@ -10,7 +11,9 @@ public class HTechTree {
     public static TechTree.TechNode context = null;
 
     public static void load(){
-
+        addToNode(Blocks.coreShard, ()->{
+            node(HBlocks.unitLaunchPad);
+        });
     }
 
     public static void addToNode(UnlockableContent p, Runnable c) {
