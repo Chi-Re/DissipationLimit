@@ -7,7 +7,6 @@ import arc.util.Log;
 import arc.util.Time;
 import chire.heatdeath.content.HBlocks;
 import chire.heatdeath.content.HTechTree;
-import chire.heatdeath.ui.dialogs.SelectDialog;
 import mindustry.Vars;
 import mindustry.mod.Mod;
 
@@ -15,15 +14,11 @@ import static mindustry.ui.Fonts.cursorScale;
 
 public class DissipationLimit extends Mod{
     public static String modName;
-
-    public static SelectDialog selectDialog;
-
     public static Graphics.Cursor target = Core.graphics.newCursor("target", cursorScale());
 
     @Override
     public void init() {
         modName = Vars.mods.getMod(DissipationLimit.class).name;
-        selectDialog = new SelectDialog("test");
     }
 
     @Override

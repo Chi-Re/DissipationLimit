@@ -11,9 +11,6 @@ public class HTechTree {
     public static TechTree.TechNode context = null;
 
     public static void load(){
-        addToNode(Blocks.coreShard, ()->{
-            node(HBlocks.unitLaunchPad);
-        });
     }
 
     public static void addToNode(UnlockableContent p, Runnable c) {

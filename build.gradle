@@ -6,7 +6,7 @@ sourceSets.main.java.srcDirs = ["src"]
 
 repositories{
     mavenCentral()
-    maven{ url "https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository" }
+//    maven{ url "https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository" }
     maven{ url 'https://www.jitpack.io' }
 }
 
@@ -17,7 +17,7 @@ java{
 
 ext{
     //the build number that this mod is made for
-    mindustryVersion = 'v154'
+    mindustryVersion = 'v155'
     jabelVersion = "93fde537c7"
     sdkRoot = System.getenv("ANDROID_HOME") ?: System.getenv("ANDROID_SDK_ROOT")
     gamePath = "C:\\Users\\${System.getenv("USERNAME")}\\Desktop\\Mindustry.jar"
@@ -59,7 +59,7 @@ configurations.all{
 }
 
 task jarAndroid{
-    dependsOn "jar"
+    dependsOn jar
 
     doLast{
         if(!sdkRoot || !new File(sdkRoot).exists()) throw new GradleException("No valid Android SDK found. Ensure that ANDROID_HOME is set to your Android SDK directory.")
@@ -72,19 +72,19 @@ task jarAndroid{
         def dependencies = (configurations.compileClasspath.asList() + configurations.runtimeClasspath.asList() + [new File(platformRoot, "android.jar")]).collect{ "--classpath $it.path" }.join(" ")
 
         //dex and desugar files - this requires d8 in your PATH
-        "F:\\android-sdk-windows\\build-tools\\29.0.3\\d8.bat $dependencies --min-api 14 --output ${project.archivesBaseName}Android.jar ${project.archivesBaseName}Desktop.jar"
+        "$sdkRoot\\build-tools\\29.0.3\\d8.bat $dependencies --min-api 14 --output ${project.name}Android.jar ${project.name}Desktop.jar"
             .execute(null, new File("$buildDir/libs")).waitForProcessOutput(System.out, System.err)
     }
 }
 
 jar{
-    archiveFileName = "${base.archivesBaseName}Desktop.jar"
+    archiveFileName = "${project.name}Desktop.jar"
 
     from{
         configurations.runtimeClasspath.collect{ it.isDirectory() ? it : zipTree(it) }
     }
 
-    from(rootDir){
+    from(projectDir){
         include "mod.hjson"
     }
 
@@ -93,17 +93,17 @@ jar{
     }
 }
 
-task deploy(type: Jar){
-    dependsOn jarAndroid
+tasks.register('deploy', Jar) {
     dependsOn jar
-    archiveFileName = "${base.archivesBaseName}.jar"
+    dependsOn jarAndroid
+    archiveFileName = "${project.name}.jar"
 
-    from{ [zipTree("$buildDir/libs/${project.archivesBaseName}Desktop.jar"), zipTree("$buildDir/libs/${project.archivesBaseName}Android.jar")] }
+    from { [zipTree("$buildDir/libs/${project.name}Desktop.jar"), zipTree("$buildDir/libs/${project.name}Android.jar")] }
 
-    doLast{
-        delete{
-            delete "$buildDir/libs/${project.archivesBaseName}Desktop.jar"
-            delete "$buildDir/libs/${project.archivesBaseName}Android.jar"
+    doLast {
+        delete {
+            delete "$buildDir/libs/${project.name}Desktop.jar"
+            delete "$buildDir/libs/${project.name}Android.jar"
         }
     }
 }
@@ -113,10 +113,10 @@ tasks.register('debugDesktop', JavaExec) {
 
     doFirst {
         delete{
-            delete "${modPath}/${project.archivesBaseName}Desktop.jar"
+            delete "${modPath}/${project.name}Desktop.jar"
         }
         copy {
-            from "$buildDir/libs/${project.archivesBaseName}Desktop.jar"
+            from "$buildDir/libs/${project.name}Desktop.jar"
             into modPath
         }
     }
@@ -133,10 +133,10 @@ tasks.register('debugMobile', JavaExec) {
 
     doFirst {
         delete{
-            delete "${modPath}/${project.archivesBaseName}Desktop.jar"
+            delete "${modPath}/${project.name}Desktop.jar"
         }
         copy {
-            from "$buildDir/libs/${project.archivesBaseName}Desktop.jar"
+            from "$buildDir/libs/${project.name}Desktop.jar"
             into modPath
         }
     }
