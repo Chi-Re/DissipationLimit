@@ -1,13 +1,12 @@
 package chire.heatdeath.content;
 
 import arc.struct.Seq;
-import mindustry.content.Blocks;
 import mindustry.content.TechTree;
 import mindustry.ctype.UnlockableContent;
 import mindustry.game.Objectives;
 import mindustry.type.ItemStack;
 
-public class HTechTree {
+public class DLTechTree {
     public static TechTree.TechNode context = null;
 
     public static void load(){

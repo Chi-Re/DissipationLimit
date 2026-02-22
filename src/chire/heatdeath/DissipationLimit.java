@@ -3,10 +3,10 @@ package chire.heatdeath;
 import arc.Core;
 import arc.Graphics;
 import arc.graphics.g2d.TextureAtlas;
-import arc.util.Log;
-import arc.util.Time;
-import chire.heatdeath.content.HBlocks;
-import chire.heatdeath.content.HTechTree;
+import chire.heatdeath.content.DLBlocks;
+import chire.heatdeath.content.DLTechTree;
+import chire.heatdeath.content.DLUnitTypes;
+import chire.heatdeath.util.EntityRegistry;
 import mindustry.Vars;
 import mindustry.mod.Mod;
 
@@ -23,8 +23,11 @@ public class DissipationLimit extends Mod{
 
     @Override
     public void loadContent(){
-        HBlocks.load();
-        HTechTree.load();
+        EntityRegistry.register();
+
+        DLBlocks.load();
+        DLUnitTypes.load();
+        DLTechTree.load();
     }
 
     public static String getBundle(String str){
