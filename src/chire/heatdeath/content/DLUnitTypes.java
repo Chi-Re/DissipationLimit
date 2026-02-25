@@ -1,6 +1,7 @@
 package chire.heatdeath.content;
 
 import chire.heatdeath.type.ValkyrieUnitType;
+import chire.heatdeath.type.entity.ValkyrieUnitEntity;
 import chire.heatdeath.util.EntityRegistry;
 import mindustry.gen.Sounds;
 import mindustry.gen.UnitEntity;
@@ -10,7 +11,7 @@ public class DLUnitTypes {
     public static UnitType valkyrie;
 
     public static void load() {
-        valkyrie = EntityRegistry.content("valkyrie", UnitEntity::create, name -> new ValkyrieUnitType(name){{
+        valkyrie = EntityRegistry.content("valkyrie", ValkyrieUnitEntity::create, name -> new ValkyrieUnitType(name){{
             researchCostMultiplier = 0.5f;
             speed = 2.7f;
             accel = 0.08f;
@@ -21,7 +22,7 @@ public class DLUnitTypes {
             hitSize = 9;
             itemCapacity = 10;
             circleTarget = true;
-            omniMovement = false;
+            omniMovement = true;
             rotateSpeed = 5f;
             circleTargetRadius = 60f;
             wreckSoundVolume = 0.7f;

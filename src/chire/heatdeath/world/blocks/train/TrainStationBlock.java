@@ -5,5 +5,5 @@ import mindustry.world.blocks.payloads.PayloadBlock;
 public class TrainStationBlock extends PayloadBlock {
     public TrainStationBlock(String name) {
         super(name);
-    }//瓦尔基里
+    }
 }
