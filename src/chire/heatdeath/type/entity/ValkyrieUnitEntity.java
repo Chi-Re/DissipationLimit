@@ -1,14 +1,16 @@
 package chire.heatdeath.type.entity;
 
-import arc.util.Log;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
+import chire.heatdeath.core.UnitChunks;
 import mindustry.core.World;
+import mindustry.gen.Building;
 import mindustry.gen.UnitEntity;
+import mindustry.world.blocks.payloads.BuildPayload;
 
 public class ValkyrieUnitEntity extends UnitEntity {
     //单位上保存的区块内容
-    public World unitWorld = new World();
+    public UnitChunks unitChunks;
 
     protected ValkyrieUnitEntity() {
         super();

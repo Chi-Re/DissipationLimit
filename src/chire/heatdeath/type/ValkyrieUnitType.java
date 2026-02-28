@@ -1,31 +1,30 @@
 package chire.heatdeath.type;
 
 import arc.Core;
-import arc.graphics.g2d.Draw;
-import arc.math.geom.Vec2;
 import arc.scene.ui.layout.Table;
 import arc.util.Log;
+import chire.heatdeath.core.DLWorld;
+import chire.heatdeath.core.UnitChunks;
 import chire.heatdeath.graphics.g2d.ValkyrieSpriteBatch;
 import chire.heatdeath.type.entity.ValkyrieUnitEntity;
-import chire.heatdeath.world.ValkyrieTile;
+import chire.heatdeath.world.valkyrie.ValkyrieChunk;
 import mindustry.Vars;
 import mindustry.content.Blocks;
+import mindustry.content.Items;
 import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.gen.Unit;
 import mindustry.type.UnitType;
-import mindustry.world.Tile;
-import mindustry.world.Tiles;
-import mindustry.world.blocks.defense.turrets.Turret;
+import mindustry.world.blocks.sandbox.ItemSource;
 
 public class ValkyrieUnitType extends UnitType {
-    public int worldWidth, worldHeight;
+    public int chunkWidth, chunkHeight;
 
     public ValkyrieUnitType(String name) {
         super(name);
 
-        worldWidth = 10;
-        worldHeight = 10;
+        chunkWidth = 20;
+        chunkHeight = 20;
     }
 
     @Override
@@ -33,16 +32,32 @@ public class ValkyrieUnitType extends UnitType {
         Unit unit = super.create(team);
 
         if (unit instanceof ValkyrieUnitEntity valkyrieUnit) {
-            valkyrieUnit.unitWorld.tiles = new Tiles(worldWidth, worldHeight);
-            for(int i = 0; i < worldWidth * worldHeight; i++){
-                valkyrieUnit.unitWorld.tiles.set(i % worldWidth, i / worldWidth, new ValkyrieTile(i % worldWidth, i / worldWidth));
-            }
-            valkyrieUnit.unitWorld.tiles.eachTile(tile -> tile.setFloor(Blocks.metalFloor.asFloor()));
-            valkyrieUnit.unitWorld.tiles.eachTile(tile -> {
-                if (tile.x == 0 && tile.y == 0) {
-                    tile.setBlock(Blocks.salvo);
+            Building building = Blocks.conveyor.newBuilding().create(Blocks.conveyor, team);
+
+            building.rotation = 3;
+
+            valkyrieUnit.unitChunks = new UnitChunks(chunkWidth, chunkHeight);
+//            valkyrieUnit.unitChunks.addChunkBlock(0, 0, new ValkyrieChunk(Blocks.salvo, team));
+//            valkyrieUnit.unitChunks.addChunkBlock(2, 0, new ValkyrieChunk(Blocks.salvo, team));
+//            valkyrieUnit.unitChunks.addChunkBlock(0, 2, new ValkyrieChunk(Blocks.conveyor, team));
+//            valkyrieUnit.unitChunks.addChunkBlock(1, 2, new ValkyrieChunk(Blocks.conveyor, team));
+//            valkyrieUnit.unitChunks.addChunkBlock(2, 2, new ValkyrieChunk(building));
+            valkyrieUnit.unitChunks.addChunkBlock(0, 0, Blocks.salvo, team);
+            valkyrieUnit.unitChunks.addChunkBlock(2, 0, Blocks.salvo, team);
+            valkyrieUnit.unitChunks.addChunkBlock(0, 2, Blocks.itemSource, team);
+
+            valkyrieUnit.unitChunks.setBoolf(chunk -> {
+                if (chunk.build.block == Blocks.conveyor && chunk.x == 0 && chunk.y == 2) {
+                    chunk.build.handleItem(chunk.build, Items.copper);
+                }
+
+                if (chunk.build instanceof ItemSource.ItemSourceBuild itemSource) {
+                    itemSource.outputItem = Items.copper;
                 }
             });
+
+            valkyrieUnit.unitChunks.addChunkBlock(1, 2, Blocks.conveyor, team);
+            valkyrieUnit.unitChunks.addChunkBlock(2, 2, building);
         }
 
         return unit;
@@ -53,35 +68,38 @@ public class ValkyrieUnitType extends UnitType {
         super.update(unit);
 
         if (unit instanceof ValkyrieUnitEntity entity) {
-            for (var tile : entity.unitWorld.tiles) {
-                if (!(tile instanceof ValkyrieTile valkyrieTile)) continue;
+            if (Vars.world instanceof DLWorld unitWorld) {
+                unitWorld.setChunks(entity.unitChunks.chunks);
 
-                Vec2 vec = new Vec2(tile.x + (float) (tile.block().size - 1) / 2, tile.y + (float) (tile.block().size - 1) / 2).rotate(unit.rotation - 90);
+                entity.unitChunks.update(entity);
 
-                if (tile.build != null) {
-                    tile.build.set(unit.x + vec.x * Vars.tilesize, unit.y + vec.y * Vars.tilesize);
-                }
-
-                //TODO 神秘floor贴图偏移，可能会修
-                vec = new Vec2(tile.x+0.5f, tile.y-0.5f).rotate(unit.rotation - 90);
-
-                valkyrieTile.unitX = unit.x + (vec.x) * Vars.tilesize;
-                valkyrieTile.unitY = unit.y + (vec.y) * Vars.tilesize;
+                entity.unitChunks.chunks = unitWorld.end();
             }
         }
     }
 
-//    float cwX(float x, Unit unit){
-//        return (x - this.x) + (unitWorld.width() * Vars.tilesize / 2f);
-//    }
-//
-//    float cwY(float y, Unit unit){
-//        return (y - this.y) + (unitWorld.height() * Vars.tilesize / 2f);
-//    }
-
     @Override
     public void draw(Unit unit) {
         super.draw(unit);
+
+        if (unit instanceof ValkyrieUnitEntity entity) {
+            //炮台绘制存在问题，只能覆盖Core.batch绘制
+//            float z = Draw.z();
+//            Draw.z(Layer.flyingUnitLow);
+//
+//            entity.unitChunks.draw(entity);
+//
+//            Draw.z(z);
+            if (Core.batch instanceof ValkyrieSpriteBatch valkyrieBatch) {
+                valkyrieBatch.setUnit(entity);
+
+                entity.unitChunks.draw(entity);
+
+                valkyrieBatch.end();
+            } else {
+                Log.warn("[ValkyrieUnitType] unexpected batch object");
+            }
+        }
     }
 
     @Override
@@ -91,36 +109,7 @@ public class ValkyrieUnitType extends UnitType {
 
     @Override
     public void drawBody(Unit unit) {
-//        super.drawBody(unit);
-//        ValkyrieSpriteBatch batch = new ValkyrieSpriteBatch();
-//
-//        Draw.batch(batch, () -> {
-//
-//        });
 
-//        Log.warn(Core.batch.getClass().getName());
-
-        if (unit instanceof ValkyrieUnitEntity entity) {
-            if (Core.batch instanceof ValkyrieSpriteBatch valkyrieBatch) {
-                valkyrieBatch.setRotation(unit.rotation);
-
-                for (var tile : entity.unitWorld.tiles) {
-                    if (tile.build != null) {
-                        tile.build.draw();
-                    }
-
-                    //TODO 一般不会存在地板的问题，因为地板应该不会飞起来。之后可能只支持地板。
-                    float z = Draw.z();
-                    Draw.z(z - 0.01f);
-                    tile.floor().drawBase(tile);
-                    Draw.z(z);
-                }
-
-                valkyrieBatch.endRotation();
-            } else {
-                Log.warn("[ValkyrieUnitType] unexpected batch object");
-            }
-        }
     }
 
     @Override

@@ -1,21 +1,43 @@
 package chire.heatdeath.core;
 
+import arc.struct.ArrayMap;
+import arc.util.Log;
 import arc.util.Nullable;
+import chire.heatdeath.world.Chunks;
+import chire.heatdeath.world.valkyrie.ValkyrieChunk;
 import mindustry.core.World;
 import mindustry.gen.Building;
+import mindustry.gen.Unit;
 import mindustry.world.Tile;
 
-import java.util.WeakHashMap;
-
 public class DLWorld extends World {
+    private Chunks chunks;
+
+    public void setChunks(Chunks chunks) {
+        this.chunks = chunks;
+    }
+
     @Override
     public @Nullable Building build(int x, int y){
-        return super.build(x, y);
+//        if (chunks != null) Log.warn("[DLWorld] Building " + x + " " + y);
+//        return super.build(x, y);
+        if (chunks != null) {
+            var chunk = chunks.get(x, y);
+            return chunk == null ? null : chunk.build;
+        } else {
+            return super.build(x, y);
+        }
     }
 
     @Override
     @Nullable
     public Tile tile(int x, int y){
         return super.tile(x, y);
+    }
+
+    public Chunks end(){
+        var c = chunks;
+        this.chunks = null;
+        return c;
     }
 }
