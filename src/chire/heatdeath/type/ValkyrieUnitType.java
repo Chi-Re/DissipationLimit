@@ -1,24 +1,36 @@
 package chire.heatdeath.type;
 
 import arc.Core;
+import arc.graphics.Color;
+import arc.graphics.g2d.Batch;
+import arc.graphics.g2d.Draw;
+import arc.graphics.g2d.Fill;
+import arc.graphics.g2d.SpriteBatch;
+import arc.math.Mat;
 import arc.scene.ui.layout.Table;
 import arc.util.Log;
+import arc.util.Tmp;
 import chire.heatdeath.core.DLWorld;
 import chire.heatdeath.core.UnitChunks;
 import chire.heatdeath.graphics.g2d.ValkyrieSpriteBatch;
 import chire.heatdeath.type.entity.ValkyrieUnitEntity;
-import chire.heatdeath.world.valkyrie.ValkyrieChunk;
 import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Items;
 import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.gen.Unit;
+import mindustry.graphics.Layer;
 import mindustry.type.UnitType;
 import mindustry.world.blocks.sandbox.ItemSource;
 
+import static arc.Core.batch;
+import static arc.Core.camera;
+
 public class ValkyrieUnitType extends UnitType {
     public int chunkWidth, chunkHeight;
+
+    public static final Batch altBatch = new SpriteBatch();
 
     public ValkyrieUnitType(String name) {
         super(name);
@@ -32,16 +44,12 @@ public class ValkyrieUnitType extends UnitType {
         Unit unit = super.create(team);
 
         if (unit instanceof ValkyrieUnitEntity valkyrieUnit) {
+            //测试部分方块代码
             Building building = Blocks.conveyor.newBuilding().create(Blocks.conveyor, team);
 
             building.rotation = 3;
 
             valkyrieUnit.unitChunks = new UnitChunks(chunkWidth, chunkHeight);
-//            valkyrieUnit.unitChunks.addChunkBlock(0, 0, new ValkyrieChunk(Blocks.salvo, team));
-//            valkyrieUnit.unitChunks.addChunkBlock(2, 0, new ValkyrieChunk(Blocks.salvo, team));
-//            valkyrieUnit.unitChunks.addChunkBlock(0, 2, new ValkyrieChunk(Blocks.conveyor, team));
-//            valkyrieUnit.unitChunks.addChunkBlock(1, 2, new ValkyrieChunk(Blocks.conveyor, team));
-//            valkyrieUnit.unitChunks.addChunkBlock(2, 2, new ValkyrieChunk(building));
             valkyrieUnit.unitChunks.addChunkBlock(0, 0, Blocks.salvo, team);
             valkyrieUnit.unitChunks.addChunkBlock(2, 0, Blocks.salvo, team);
             valkyrieUnit.unitChunks.addChunkBlock(0, 2, Blocks.itemSource, team);
@@ -83,22 +91,36 @@ public class ValkyrieUnitType extends UnitType {
         super.draw(unit);
 
         if (unit instanceof ValkyrieUnitEntity entity) {
-            //炮台绘制存在问题，只能覆盖Core.batch绘制
-//            float z = Draw.z();
-//            Draw.z(Layer.flyingUnitLow);
-//
-//            entity.unitChunks.draw(entity);
-//
-//            Draw.z(z);
-            if (Core.batch instanceof ValkyrieSpriteBatch valkyrieBatch) {
-                valkyrieBatch.setUnit(entity);
+            float z = Draw.z();
+
+            Draw.draw(Layer.flyingUnitLow - 1f, () -> {
+                Mat proj = Tmp.m1.set(Draw.proj());
+
+                camera.update();
+                Draw.flush();
+                Batch old = batch;
+                batch = altBatch;
+
+                Draw.proj(camera);
+
+                Draw.sort(true);
 
                 entity.unitChunks.draw(entity);
 
-                valkyrieBatch.end();
-            } else {
-                Log.warn("[ValkyrieUnitType] unexpected batch object");
-            }
+                Draw.z(9999f);
+                Draw.color(Color.clear);
+                Fill.rect(0, 0, 0, 0);
+
+                Draw.reset();
+                Draw.flush();
+                Draw.sort(false);
+
+                camera.update();
+                Draw.proj(proj);
+                batch = old;
+            });
+
+            Draw.z(z);
         }
     }
 

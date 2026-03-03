@@ -2,6 +2,7 @@ package chire.heatdeath.graphics.g2d;
 
 import arc.graphics.g2d.SpriteBatch;
 import arc.graphics.g2d.TextureRegion;
+import arc.util.Log;
 import mindustry.gen.Unit;
 import mindustry.graphics.Layer;
 
@@ -21,6 +22,12 @@ public class ValkyrieSpriteBatch extends SpriteBatch {
     protected void z(float z){
         if (this.unit != null) {
             super.z(Layer.flyingUnitLow);
+//            Log.warn("Valkyrie sprite batch z: "+z);
+//            if (z > Layer.plans && z < Layer.flyingUnitLow) {
+//                super.z(Layer.flyingUnitLow + (z - Layer.plans));
+//            } else {
+//                super.z(Layer.flyingUnitLow);
+//            }
         } else {
             super.z(z);
         }

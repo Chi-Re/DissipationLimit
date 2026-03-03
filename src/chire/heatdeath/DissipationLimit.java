@@ -28,7 +28,7 @@ public class DissipationLimit extends Mod{
     @Override
     public void loadContent(){
         Log.info("[DissipationLimit] loadContent setup");
-        Core.batch = new ValkyrieSpriteBatch(); //覆盖原版代码，实现方块旋转。
+//        Core.batch = new ValkyrieSpriteBatch(); //覆盖原版代码，实现方块旋转。
         Vars.world = new DLWorld(); //覆盖原版代码，实现多区块加载(TODO 性能存在问题
 
         EntityRegistry.register();

@@ -56,18 +56,21 @@ public class ValkyrieChunk extends BuildPayload {
 
     @Override
     public void draw(){
-        float prevZ = Draw.z();
-        Draw.z(prevZ - 0.001f);
-        drawShadow(1f);
-        Draw.z(prevZ);
-        Draw.zTransform(z ->
-                z >= Layer.flyingUnitLow + 1f ? z :
-                        0.0011f + Math.min(Mathf.clamp((z - prevZ)/100f, -0.0009f, 0.9f) + prevZ, Layer.flyingUnitLow - 1f)
-        );
-//        build.tile = emptyTile;
-        build.draw();
+//        float prevZ = Draw.z();
+////        Draw.z(prevZ - 0.001f);
+////        drawShadow(1f);
+//        Draw.z(prevZ);
+//        Draw.zTransform(z ->
+//                z >= Layer.flyingUnitLow + 1f ? z :
+//                        0.0011f + Math.min(Mathf.clamp((z - prevZ)/100f, -0.0009f, 0.9f) + prevZ, Layer.flyingUnitLow - 1f)
+//        );
+//        build.draw();
+//        build.tile.build = build;
+//        Draw.zTransform();
+//        Draw.z(prevZ);
+
+        Draw.z(Layer.block);
         build.tile.build = build;
-        Draw.zTransform();
-        Draw.z(prevZ);
+        build.draw();
     }
 }

@@ -5,6 +5,7 @@ import arc.func.Cons;
 import arc.func.Prov;
 import arc.graphics.g2d.Draw;
 import arc.math.geom.Position;
+import arc.util.Log;
 import chire.heatdeath.type.entity.ValkyrieUnitEntity;
 import chire.heatdeath.world.Chunks;
 import chire.heatdeath.world.valkyrie.ValkyrieChunk;
@@ -59,8 +60,6 @@ public class UnitChunks {
     }
 
     public <T extends ValkyrieUnitEntity> void draw(T unit){
-        float prev = Draw.z();
-        Draw.z(prev - 0.02f);
         for (ValkyrieChunk chunk : chunks) {
             if (chunk == null) continue;
             chunk.set(
@@ -70,7 +69,6 @@ public class UnitChunks {
             );
             chunk.draw();
         }
-        Draw.z(prev);
     }
 
     public static class ChunkPosition implements Position {
