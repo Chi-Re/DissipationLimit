@@ -1,18 +1,13 @@
 package chire.heatdeath.world.valkyrie;
 
 import arc.graphics.g2d.Draw;
-import arc.math.Mathf;
-import arc.util.Log;
 import arc.util.Nullable;
 import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.gen.Unit;
 import mindustry.graphics.Layer;
 import mindustry.world.Block;
-import mindustry.world.Tile;
 import mindustry.world.blocks.payloads.BuildPayload;
-
-import static mindustry.Vars.emptyTile;
 
 public class ValkyrieChunk extends BuildPayload {
     public int x, y;
@@ -23,7 +18,7 @@ public class ValkyrieChunk extends BuildPayload {
 
     public ValkyrieChunk(Building build, int x, int y){
         super(build);
-        build.tile = new ChunkTile(x, y);
+        build.tile = new ChunkTile(x+(build.block.size-1)/2, y+(build.block.size-1)/2);
         build.tile.build = build;
         set(x, y);
     }
@@ -56,19 +51,6 @@ public class ValkyrieChunk extends BuildPayload {
 
     @Override
     public void draw(){
-//        float prevZ = Draw.z();
-////        Draw.z(prevZ - 0.001f);
-////        drawShadow(1f);
-//        Draw.z(prevZ);
-//        Draw.zTransform(z ->
-//                z >= Layer.flyingUnitLow + 1f ? z :
-//                        0.0011f + Math.min(Mathf.clamp((z - prevZ)/100f, -0.0009f, 0.9f) + prevZ, Layer.flyingUnitLow - 1f)
-//        );
-//        build.draw();
-//        build.tile.build = build;
-//        Draw.zTransform();
-//        Draw.z(prevZ);
-
         Draw.z(Layer.block);
         build.tile.build = build;
         build.draw();

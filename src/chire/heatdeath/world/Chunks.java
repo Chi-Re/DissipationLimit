@@ -1,36 +1,31 @@
 package chire.heatdeath.world;
 
+import arc.math.geom.Position;
+import arc.struct.ArrayMap;
 import arc.util.Log;
 import arc.util.Nullable;
 import chire.heatdeath.world.valkyrie.ValkyrieChunk;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.*;
 
 public class Chunks implements Iterable<ValkyrieChunk> {
     public final int width, height;
 
-    final ValkyrieChunk[] array;
+    private final Map<ChunkPosition, ValkyrieChunk> coordChunk = new HashMap<>();
 
-    final int[][] position;
+    private final Map<ChunkPosition, ChunkPosition> coordPos = new HashMap<>();
 
     public Chunks(int width, int height) {
         this.width = width;
         this.height = height;
-        this.array = new ValkyrieChunk[width * height];
-        this.position = new int[width][height];
     }
 
     public void set(int x, int y, ValkyrieChunk chunk){
-        array[y*width + x] = chunk;
-        position[x][y] = y*width + x;
+        coordChunk.put(new ChunkPosition(x, y), chunk);
 
-        for (int i = x; i < x + chunk.build.block.size; i++) {
-            for (int j = y; j < y + chunk.build.block.size; j++) {
-                position[i][j] = position[x][y];
-                //Log.warn(String.format("set %d %d", i, j)+" is "+chunk.build.block.name);
+        for (int i = x; i < x + chunk.size(); i++) {
+            for (int j = y; j < y + chunk.size(); j++) {
+                coordPos.put(new ChunkPosition(i, j), new ChunkPosition(x, y));
             }
         }
     }
@@ -38,28 +33,44 @@ public class Chunks implements Iterable<ValkyrieChunk> {
     @Nullable
     public ValkyrieChunk get(int x, int y){
         return (x < 0 || x >= width || y < 0 || y >= height) ? null :
-                array[y*width + x] == null ? array[position[x][y]] : array[y*width + x];
+                coordChunk.containsKey(new ChunkPosition(x, y)) ? coordChunk.get(new ChunkPosition(x, y)) :
+                    coordPos.containsKey(new ChunkPosition(x, y)) ? coordChunk.get(coordPos.get(new ChunkPosition(x, y))) : null;
     }
 
     @Override
     public Iterator<ValkyrieChunk> iterator() {
-        return new ChunkIterator();
+        return coordChunk.values().iterator();
     }
 
-    private class ChunkIterator implements Iterator<ValkyrieChunk>{
-        int index = 0;
+    public static class ChunkPosition implements Position {
+        float x, y;
 
-        ChunkIterator(){
+        public ChunkPosition(float x, float y) {
+            this.x = x;
+            this.y = y;
         }
 
         @Override
-        public boolean hasNext(){
-            return index < array.length;
+        public float getX() {
+            return x;
         }
 
         @Override
-        public ValkyrieChunk next(){
-            return array[index++];
+        public float getY() {
+            return y;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ChunkPosition)) return false;
+            ChunkPosition point3D = (ChunkPosition) o;
+            return x == point3D.x && y == point3D.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
         }
     }
 }

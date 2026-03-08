@@ -2,6 +2,7 @@ package chire.heatdeath.content;
 
 
 import chire.heatdeath.world.blocks.train.TrainTrackBlock;
+import chire.heatdeath.world.blocks.valkyrie.ValkyrieCreator;
 import mindustry.content.Items;
 import mindustry.type.Category;
 
@@ -17,6 +18,11 @@ public class DLBlocks {
             outputsPayload = true;
             hasShadow = false;
             requirements(Category.units, with(Items.copper, 1));
+        }};
+
+        new ValkyrieCreator("valkyrie-creator"){{
+            requirements(Category.units, with(Items.copper, 1));
+            size = 2;
         }};
     }
 }

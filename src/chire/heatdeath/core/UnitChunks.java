@@ -16,6 +16,7 @@ import mindustry.gen.Building;
 import mindustry.world.Block;
 import mindustry.world.blocks.defense.turrets.BaseTurret;
 import mindustry.world.blocks.distribution.Conveyor;
+import mindustry.world.blocks.payloads.PayloadConveyor;
 
 import java.util.ArrayList;
 
@@ -47,8 +48,8 @@ public class UnitChunks {
     public <T extends ValkyrieUnitEntity> void update(T unit) {
         for (ValkyrieChunk chunk : chunks) {
             if (chunk == null) continue;
-//            if (chunk.build instanceof BaseTurret.BaseTurretBuild) chunk.build.handleItem(chunk.build, Items.copper);
             if (chunk.build instanceof Conveyor.ConveyorBuild conveyor) conveyor.onProximityUpdate();
+            if (chunk.build instanceof PayloadConveyor.PayloadConveyorBuild conveyor) conveyor.onProximityUpdate();
             chunk.build.updateProximity();
 
             for (Cons<ValkyrieChunk> boolf : boolves) {
@@ -71,22 +72,11 @@ public class UnitChunks {
         }
     }
 
-    public static class ChunkPosition implements Position {
-        float x, y;
+    public int width() {
+        return chunkWidth;
+    }
 
-        public ChunkPosition(float x, float y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public float getX() {
-            return x;
-        }
-
-        @Override
-        public float getY() {
-            return y;
-        }
+    public int height() {
+        return chunkHeight;
     }
 }
