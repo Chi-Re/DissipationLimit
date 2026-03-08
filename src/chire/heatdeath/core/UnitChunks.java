@@ -48,8 +48,9 @@ public class UnitChunks {
     public <T extends ValkyrieUnitEntity> void update(T unit) {
         for (ValkyrieChunk chunk : chunks) {
             if (chunk == null) continue;
-            if (chunk.build instanceof Conveyor.ConveyorBuild conveyor) conveyor.onProximityUpdate();
-            if (chunk.build instanceof PayloadConveyor.PayloadConveyorBuild conveyor) conveyor.onProximityUpdate();
+            //TODO 这里可以继续优化，因为正常情况下只有周围方块更新才有必要。
+            chunk.build.onProximityUpdate();
+
             chunk.build.updateProximity();
 
             for (Cons<ValkyrieChunk> boolf : boolves) {
