@@ -32,9 +32,10 @@ public class Chunks implements Iterable<ValkyrieChunk> {
 
     @Nullable
     public ValkyrieChunk get(int x, int y){
-        return (x < 0 || x >= width || y < 0 || y >= height) ? null :
-                coordChunk.containsKey(new ChunkPosition(x, y)) ? coordChunk.get(new ChunkPosition(x, y)) :
-                    coordPos.containsKey(new ChunkPosition(x, y)) ? coordChunk.get(coordPos.get(new ChunkPosition(x, y))) : null;
+//        return (x < 0 || x >= width || y < 0 || y >= height) ? null :
+//                coordChunk.containsKey(new ChunkPosition(x, y)) ? coordChunk.get(new ChunkPosition(x, y)) :
+//                    coordPos.containsKey(new ChunkPosition(x, y)) ? coordChunk.get(coordPos.get(new ChunkPosition(x, y))) : null;
+        return coordPos.containsKey(new ChunkPosition(x, y)) ? coordChunk.get(coordPos.get(new ChunkPosition(x, y))) : null;
     }
 
     @Override

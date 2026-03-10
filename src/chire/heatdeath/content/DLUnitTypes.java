@@ -8,7 +8,7 @@ import mindustry.gen.UnitEntity;
 import mindustry.type.UnitType;
 
 public class DLUnitTypes {
-    public static UnitType valkyrie;
+    public static ValkyrieUnitType valkyrie;
 
     public static void load() {
         valkyrie = EntityRegistry.content("valkyrie", ValkyrieUnitEntity::create, name -> new ValkyrieUnitType(name){{

@@ -7,6 +7,7 @@ import arc.graphics.g2d.Fill;
 import arc.graphics.g2d.SpriteBatch;
 import arc.math.Mat;
 import arc.scene.ui.layout.Table;
+import arc.struct.Seq;
 import arc.util.Tmp;
 import chire.heatdeath.core.DLWorld;
 import chire.heatdeath.core.UnitChunks;
@@ -14,6 +15,7 @@ import chire.heatdeath.type.entity.ValkyrieUnitEntity;
 import mindustry.Vars;
 import mindustry.content.Blocks;
 import mindustry.content.Items;
+import mindustry.game.Schematic;
 import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.gen.Unit;
@@ -42,54 +44,22 @@ public class ValkyrieUnitType extends UnitType {
     public Unit create(Team team) {
         Unit unit = super.create(team);
 
-        if (unit instanceof ValkyrieUnitEntity valkyrieUnit) {
-            //测试部分方块代码
-            valkyrieUnit.unitChunks = new UnitChunks(chunkWidth, chunkHeight);
-            valkyrieUnit.unitChunks.addChunkBlock(0, 0, Blocks.salvo, team);
-            valkyrieUnit.unitChunks.addChunkBlock(2, 0, Blocks.salvo, team);
-
-            Building building = Blocks.itemSource.newBuilding().create(Blocks.itemSource, team);
-
-            ((ItemSource.ItemSourceBuild) building).outputItem = Items.copper;
-
-            valkyrieUnit.unitChunks.addChunkBlock(0, 2, building);
-
-            valkyrieUnit.unitChunks.setBoolf(chunk -> {
-                if (chunk.build instanceof ItemSource.ItemSourceBuild itemSource && itemSource.outputItem == null) {
-                    itemSource.outputItem = Items.silicon;
-                }
-            });
-
-            building = Blocks.conveyor.newBuilding().create(Blocks.conveyor, team);
-
-            building.rotation = 3;
-
-            valkyrieUnit.unitChunks.addChunkBlock(1, 2, Blocks.conveyor, team);
-            valkyrieUnit.unitChunks.addChunkBlock(2, 2, building);
-
-            valkyrieUnit.unitChunks.addChunkBlock(4, 2, Blocks.powerSource, team);
-            valkyrieUnit.unitChunks.addChunkBlock(4, 0, Blocks.repairTurret, team);
-
-            building = Blocks.airFactory.newBuilding().create(Blocks.airFactory, team);
-
-            building.rotation = 1;
-            ((UnitFactory.UnitFactoryBuild) building).currentPlan = 0;
-
-            valkyrieUnit.unitChunks.addChunkBlock(0, 3, building);
-            valkyrieUnit.unitChunks.addChunkBlock(0, 6, Blocks.payloadConveyor, team);
-
-            valkyrieUnit.unitChunks.addChunkBlock(3, 4, Blocks.itemSource, team);
-            valkyrieUnit.unitChunks.addChunkBlock(3, 3, Blocks.powerSource, team);
-        }
+        if (unit instanceof ValkyrieUnitEntity valkyrieUnit) valkyrieUnit.unitChunks = new UnitChunks(chunkWidth, chunkHeight);
 
         return unit;
     }
 
-    public Unit spawn(Team team, float x, float y, Tiles tiles) {
+    public Unit spawn(Team team, float x, float y, Seq<Schematic.Stile> tiles) {
         Unit unit = super.spawn(team, x, y);
 
         if (unit instanceof ValkyrieUnitEntity valkyrieUnit) {
-            valkyrieUnit.tiles = tiles;
+            for (Schematic.Stile tile : tiles) {
+                valkyrieUnit.unitChunks.addChunkBlock(tile.x, tile.y, tile.block, team, tile.config);
+            }
+
+//            valkyrieUnit.unitChunks.setBoolf(f -> {
+//                f.build.handleItem(f.build, Items.copper);
+//            });
         }
 
         return unit;

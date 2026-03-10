@@ -37,12 +37,12 @@ public class UnitChunks {
         boolves.add(chunksBoolf);
     }
 
-    public void addChunkBlock(int x, int y, Building payload) {
-        chunks.set(x, y, new ValkyrieChunk(payload, x, y));
+    public void addChunkBlock(int x, int y, Building payload, Object config) {
+        chunks.set(x, y, new ValkyrieChunk(payload, x, y, config));
     }
 
-    public void addChunkBlock(int x, int y, Block block, Team team) {
-        chunks.set(x, y, new ValkyrieChunk(block, team, x, y));
+    public void addChunkBlock(int x, int y, Block block, Team team, Object config) {
+        chunks.set(x, y, new ValkyrieChunk(block, team, x, y, config));
     }
 
     public <T extends ValkyrieUnitEntity> void update(T unit) {

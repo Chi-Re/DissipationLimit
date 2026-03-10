@@ -18,39 +18,12 @@ public class ValkyrieUnitEntity extends UnitEntity {
     //单位上保存的区块内容
     public UnitChunks unitChunks;
 
-    public Tiles tiles;
-
     protected ValkyrieUnitEntity() {
         super();
     }
 
     public static UnitEntity create() {
         return new ValkyrieUnitEntity();
-    }
-
-    public void drawTile() {
-        for (Tile chunk : tiles) {
-            if (chunk.build == null) continue;
-            chunk.build.x(this.x + chunk.x * Vars.tilesize + (float) (chunk.build.block.size * Vars.tilesize) / 2);
-            chunk.build.y(this.y + chunk.y * Vars.tilesize + (float) (chunk.build.block.size * Vars.tilesize) / 2);
-            chunk.build.draw();
-//            chunk.set(
-//                    unit.x + chunk.x * Vars.tilesize + (float) (chunk.build.block.size * Vars.tilesize) / 2,
-//                    unit.y + chunk.y * Vars.tilesize + (float) (chunk.build.block.size * Vars.tilesize) / 2,
-//                    unit.rotation
-//            );
-//            chunk.draw();
-        }
-    }
-
-    public void updateTile() {
-        for (Tile chunk : tiles) {
-            if (chunk.build == null) continue;
-            if (chunk.build instanceof Conveyor.ConveyorBuild conveyor) conveyor.onProximityUpdate();
-            chunk.build.updateProximity();
-
-            chunk.build.update();
-        }
     }
 
     @Override
