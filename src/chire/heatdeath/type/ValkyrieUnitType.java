@@ -54,12 +54,8 @@ public class ValkyrieUnitType extends UnitType {
 
         if (unit instanceof ValkyrieUnitEntity valkyrieUnit) {
             for (Schematic.Stile tile : tiles) {
-                valkyrieUnit.unitChunks.addChunkBlock(tile.x, tile.y, tile.block, team, tile.config);
+                valkyrieUnit.unitChunks.addChunkBlock(tile, team);
             }
-
-//            valkyrieUnit.unitChunks.setBoolf(f -> {
-//                f.build.handleItem(f.build, Items.copper);
-//            });
         }
 
         return unit;

@@ -11,6 +11,7 @@ import chire.heatdeath.world.Chunks;
 import chire.heatdeath.world.valkyrie.ValkyrieChunk;
 import mindustry.Vars;
 import mindustry.content.Items;
+import mindustry.game.Schematic;
 import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.world.Block;
@@ -37,8 +38,16 @@ public class UnitChunks {
         boolves.add(chunksBoolf);
     }
 
-    public void addChunkBlock(int x, int y, Building payload, Object config) {
-        chunks.set(x, y, new ValkyrieChunk(payload, x, y, config));
+    public void addChunkBlock(Schematic.Stile stile, Team team) {
+        Building building = stile.block.newBuilding().create(stile.block, team);
+
+        building.rotation = stile.rotation;
+
+        addChunkBlock(stile.x, stile.y, building, stile.config);
+    }
+
+    public void addChunkBlock(int x, int y, Building building, Object config) {
+        chunks.set(x, y, new ValkyrieChunk(building, x, y, config));
     }
 
     public void addChunkBlock(int x, int y, Block block, Team team, Object config) {
