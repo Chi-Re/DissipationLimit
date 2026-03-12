@@ -1,6 +1,8 @@
 package chire.heatdeath.world.blocks.valkyrie;
 
+import arc.math.geom.Point2;
 import arc.scene.ui.layout.Table;
+import arc.struct.IntSeq;
 import arc.struct.IntSet;
 import arc.struct.Seq;
 import arc.struct.StringMap;
@@ -19,6 +21,7 @@ import mindustry.ui.Styles;
 import mindustry.world.Block;
 import mindustry.world.Tiles;
 import mindustry.world.blocks.ConstructBlock;
+import mindustry.world.blocks.power.PowerNode;
 import mindustry.world.blocks.storage.CoreBlock;
 
 import static mindustry.Vars.*;
@@ -115,7 +118,25 @@ public class ValkyrieCreator extends Block {
 
                     if(tile != null && !counted.contains(tile.pos()) && realBlock != null
                             && (realBlock.isVisible() || realBlock instanceof CoreBlock)){
-                        Object config = tile instanceof ConstructBlock.ConstructBuild cons ? cons.lastConfig : tile.config();
+//                        Object config = tile instanceof ConstructBlock.ConstructBuild cons ? cons.lastConfig : tile.config();
+                        Object config;
+
+                        if (tile instanceof ConstructBlock.ConstructBuild cons){
+                            config = cons.lastConfig;
+                        } else if(tile instanceof PowerNode.PowerNodeBuild power) {
+                            IntSeq seq = power.power.links, nseq = new IntSeq();
+                            for(int i = 0; i < seq.size; i++){
+                                int pos = seq.get(i);
+                                nseq.add(Point2.pack(
+                                        Point2.x(pos)-x,
+                                        Point2.y(pos)-y
+                                ));
+                            }
+
+                            config = nseq;
+                        } else {
+                            config = tile.config();
+                        }
 
                         tiles.add(new Schematic.Stile(realBlock, cx-x, cy-y, config, (byte)tile.rotation));
                         counted.add(tile.pos());

@@ -5,9 +5,11 @@ import arc.func.Cons;
 import arc.func.Prov;
 import arc.graphics.g2d.Draw;
 import arc.math.geom.Position;
+import arc.struct.IntSeq;
 import arc.util.Log;
 import chire.heatdeath.type.entity.ValkyrieUnitEntity;
 import chire.heatdeath.world.Chunks;
+import chire.heatdeath.world.valkyrie.ChunkTile;
 import chire.heatdeath.world.valkyrie.ValkyrieChunk;
 import mindustry.Vars;
 import mindustry.content.Items;
@@ -18,8 +20,11 @@ import mindustry.world.Block;
 import mindustry.world.blocks.defense.turrets.BaseTurret;
 import mindustry.world.blocks.distribution.Conveyor;
 import mindustry.world.blocks.payloads.PayloadConveyor;
+import mindustry.world.blocks.power.PowerNode;
 
 import java.util.ArrayList;
+
+import static mindustry.Vars.control;
 
 public class UnitChunks {
     public int chunkWidth, chunkHeight;
@@ -43,7 +48,12 @@ public class UnitChunks {
 
         building.rotation = stile.rotation;
 
-        addChunkBlock(stile.x, stile.y, building, stile.config);
+        if (building instanceof PowerNode.PowerNodeBuild power) {
+            power.power.links = (IntSeq) stile.config;
+            addChunkBlock(stile.x, stile.y, power, null);
+        } else {
+            addChunkBlock(stile.x, stile.y, building, stile.config);
+        }
     }
 
     public void addChunkBlock(int x, int y, Building building, Object config) {
@@ -77,6 +87,10 @@ public class UnitChunks {
                     unit.x + chunk.x * Vars.tilesize + (float) (chunk.build.block.size * Vars.tilesize) / 2,
                     unit.y + chunk.y * Vars.tilesize + (float) (chunk.build.block.size * Vars.tilesize) / 2,
                     unit.rotation
+            );
+            ((ChunkTile) chunk.build.tile).set(
+                    unit.x,
+                    unit.y
             );
             chunk.draw();
         }
