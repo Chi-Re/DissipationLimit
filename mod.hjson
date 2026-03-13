@@ -3,6 +3,6 @@ name: "dissipation-limit"
 author: "炽热S"
 main: "chire.heatdeath.DissipationLimit"
 description: "更多的游戏内容"
-version: 1.0.0
+version: 0.0.1
 minGameVersion: 154
 java: true
